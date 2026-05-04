@@ -64,7 +64,6 @@ class MainWindow(QMainWindow):
         self.resize(self.ui.size())
         
         # Initial State
-        set_lang(lang)
         self.retranslate_ui()
         
         # Signals

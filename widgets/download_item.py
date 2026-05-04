@@ -39,21 +39,13 @@ class DownloadItemCard(QWidget):
         self.ui.speedLabel.setText(speed)
         
     def update_state(self, state):
-        # Map internal state to translated state
-        state_map = {
-            '下載中': T('state_downloading'),
-            '等待中': T('state_waiting'),
-            '已下載': T('state_downloaded'),
-            '已取消': T('state_cancelled'),
-            '錯誤': T('state_error'),
-            '合併中': T('state_merging')
-        }
-        self.ui.statusLabel.setText(state_map.get(state, state))
+        # state is now a translation key like 'state_downloading'
+        self.ui.statusLabel.setText(T(state))
         
-        # Update colors based on state if needed
-        if state == '已下載':
+        # Update colors based on key
+        if state == 'state_downloaded':
             self.ui.statusLabel.setStyleSheet("color: #4ade80;") # Green
-        elif state == '錯誤':
+        elif state == 'state_error' or state == 'state_bad_url':
             self.ui.statusLabel.setStyleSheet("color: #f87171;") # Red
         else:
             self.ui.statusLabel.setStyleSheet("color: #9494b4;")

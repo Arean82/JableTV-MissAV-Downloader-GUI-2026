@@ -65,10 +65,10 @@ class DownloadManager(QObject):
                 threading.Thread(target=self._run, args=(url, dest), daemon=True).start()
             else:
                 self._pending.append((url, dest))
-                self._set_state(url, '等待中')
+                self._set_state(url, 'state_waiting')
 
     def _run(self, url: str, dest: str):
-        self._set_state(url, '準備中')
+        self._set_state(url, 'state_preparing')
         try:
             self._prep_sem.acquire()
             try:
@@ -79,7 +79,7 @@ class DownloadManager(QObject):
             if not job or not job.is_url_vaildate():
                 with self._lock:
                     self._active.pop(url, None)
-                self._set_state(url, '網址錯誤')
+                self._set_state(url, 'state_bad_url')
                 self._try_next()
                 return
                 
@@ -87,7 +87,7 @@ class DownloadManager(QObject):
                 self._active[url] = job
             
             name = job.target_name() or ''
-            self._set_state(url, '下載中', name=name)
+            self._set_state(url, 'state_downloading', name=name)
             
             job._progress_callback = lambda d, t, s: self._on_progress(url, d, t, s)
             job.start_download()
@@ -96,14 +96,14 @@ class DownloadManager(QObject):
                 self._active.pop(url, None)
                 
             if job._cancel_job:
-                self._set_state(url, '已取消')
+                self._set_state(url, 'state_cancelled')
             else:
-                self._set_state(url, '已下載', progress=100)
+                self._set_state(url, 'state_downloaded', progress=100)
         except Exception as exc:
             print(f'[Downloader] Error: {exc}')
             with self._lock:
                 self._active.pop(url, None)
-            self._set_state(url, '未完成')
+            self._set_state(url, 'state_unfinished')
         self._try_next()
 
     def _try_next(self):
