@@ -102,6 +102,10 @@ STRINGS = {
         'resolution_desc': '選擇下載影片的解析度偏好（低畫質可省流量、加快下載）',
         'resolution_highest': '最高畫質',
         'resolution_lowest': '最低畫質（省流量）',
+        
+        # Interface Settings
+        'language_setting': '介面語言',
+        'language_desc': '切換應用程式的介面語言（需重啟生效）',
 
         # MissAV language prefix for URLs
         'missav_lang': 'cn',
@@ -205,6 +209,10 @@ STRINGS = {
         'resolution_desc': 'Choose download resolution preference (lowest saves bandwidth)',
         'resolution_highest': 'Highest Quality',
         'resolution_lowest': 'Lowest Quality (Saving Mode)',
+
+        # Interface Settings
+        'language_setting': 'Interface Language',
+        'language_desc': 'Change the application language (restart required to apply)',
 
         # MissAV language prefix for URLs
         'missav_lang': 'en',

@@ -37,21 +37,24 @@ class _SpeedLimiter:
             self._last = time.time()
 
     def acquire(self, nbytes: int) -> None:
-        with self._lock:
-            limit = self._limit_bps
-        if limit <= 0:
+        if nbytes <= 0:
             return
         while nbytes > 0:
             with self._lock:
+                limit = self._limit_bps
+                if limit <= 0:
+                    return
                 now = time.time()
-                self._tokens += (now - self._last) * self._limit_bps
+                self._tokens += (now - self._last) * limit
                 self._last = now
-                if self._tokens > self._limit_bps:
-                    self._tokens = float(self._limit_bps)
+                if self._tokens > limit:
+                    self._tokens = float(limit)
+                
                 take = min(nbytes, int(self._tokens))
                 if take > 0:
                     self._tokens -= take
                     nbytes -= take
+            
             if nbytes > 0:
                 time.sleep(0.05)
 
@@ -131,7 +134,8 @@ class M3U8Crawler:
             self.get_url_infos()
             if self.is_url_vaildate():
                 if self._targetName:
-                    self._targetName = re.sub(r'[^\w\-_\. ]', '', self._targetName)
+                    # Allow alphanumeric, dashes, dots, spaces, and CJK characters
+                    self._targetName = re.sub(r'[^\w\-_\. \u4e00-\u9fff\u3040-\u30ff\u31f0-\u31ff\uff00-\uffef]', '', self._targetName)
                 if not self.silence:
                     if self._targetName: print("檔案名稱: " + self._targetName, flush=True)
                     if self._dest_folder: print("儲存位置: " + self._dest_folder, flush=True)
@@ -288,8 +292,20 @@ class M3U8Crawler:
         try:
             session = _get_session()
             response = session.get(url, headers=self._m3u8_headers(), timeout=20)
+            
+            # B04: Enhanced Error Handling
+            if response.status_code == 404:
+                print(f'\n[錯誤] 片段不存在 (404): {url}', flush=True)
+                with self._speed_lock:
+                    self._pending_set.discard((seq_num, url))
+                return False
+            if response.status_code in (429, 500, 502, 503, 504):
+                # Retryable errors
+                return False
+                
             if response.status_code != 200:
                 return False
+                
             content_ts = response.content
             speed_limiter.acquire(len(content_ts))
             if self._key_content:
@@ -396,6 +412,14 @@ class M3U8Crawler:
             try: self._t_executor.shutdown(wait=False, cancel_futures=True)
             except TypeError: self._t_executor.shutdown(wait=False)
             self._t_executor = None
+        
+        # B03: Resource Cleanup on cancel
+        import shutil
+        if self._temp_folder and os.path.exists(self._temp_folder):
+            try:
+                shutil.rmtree(self._temp_folder, ignore_errors=True)
+            except Exception:
+                pass
         print("\n下載已取消", flush=True)
 
     def begin_concurrent_download(self):

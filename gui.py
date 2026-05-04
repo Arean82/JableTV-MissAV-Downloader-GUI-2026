@@ -43,7 +43,9 @@ DEFAULT_CONCURRENT = 2
 MAX_CONCURRENT = 10
 
 
-def gui_main(url, dest):
+def gui_main(url, dest, lang='zh'):
+    from locales import set_lang
+    set_lang(lang)
     win = MainWindow(dest=dest, url=url)
     win.mainloop()
     win.cancel_all()

@@ -66,7 +66,7 @@ SITES = {
 
 # ── Download Manager ────────────────────────────────────────────────
 class DownloadItem:
-    __slots__ = ('url', 'name', 'state', 'progress', 'speed')
+    __slots__ = ('url', 'name', 'state', 'progress', 'speed', '_lock')
 
     def __init__(self, url: str, name: str = '', state: str = ''):
         self.url = url
@@ -74,6 +74,7 @@ class DownloadItem:
         self.state = state
         self.progress = 0
         self.speed = ''
+        self._lock = threading.RLock()
 
 
 class DownloadManager:
@@ -201,13 +202,14 @@ class DownloadManager:
         with self._lock:
             item = self._items.get(url)
             if item:
-                item.state = state
-                if name:
-                    item.name = name
-                if progress >= 0:
-                    item.progress = progress
-                if state != '下載中':
-                    item.speed = ''
+                with item._lock:
+                    item.state = state
+                    if name:
+                        item.name = name
+                    if progress >= 0:
+                        item.progress = progress
+                    if state != '下載中':
+                        item.speed = ''
 
     def _on_progress(self, url: str, done: int, total: int, speed_bps: float):
         if total <= 0:
@@ -218,8 +220,9 @@ class DownloadManager:
         with self._lock:
             item = self._items.get(url)
             if item:
-                item.progress = pct
-                item.speed = spd
+                with item._lock:
+                    item.progress = pct
+                    item.speed = spd
 
     def save_csv(self, path: str):
         with self._lock:
@@ -755,6 +758,24 @@ class ModernApp(ctk.CTk):
                           fg_color=BG_INPUT, button_color=ACCENT,
                           button_hover_color=ACCENT_HOVER).pack(side='left', padx=10)
         ctk.CTkLabel(grp, text=T('resolution_desc'),
+                      text_color=TEXT_DIM,
+                      font=('Microsoft JhengHei', 9)).pack(anchor='w', padx=(110, 0), pady=(0, 8))
+
+        # Language selection
+        row_lang = ctk.CTkFrame(grp, fg_color='transparent')
+        row_lang.pack(fill='x', padx=20, pady=(8, 2))
+        ctk.CTkLabel(row_lang, text=T('language_setting'), text_color=TEXT_PRI,
+                     font=('Microsoft JhengHei', 11), width=90,
+                     anchor='w').pack(side='left')
+        self._lang_var = ctk.StringVar(value='繁體中文' if get_lang() == 'zh' else 'English')
+        ctk.CTkOptionMenu(row_lang,
+                          values=['繁體中文', 'English'],
+                          variable=self._lang_var,
+                          command=self._on_lang_change, width=130, height=34,
+                          corner_radius=6,
+                          fg_color=BG_INPUT, button_color=ACCENT,
+                          button_hover_color=ACCENT_HOVER).pack(side='left', padx=10)
+        ctk.CTkLabel(grp, text=T('language_desc'),
                      text_color=TEXT_DIM,
                      font=('Microsoft JhengHei', 9)).pack(anchor='w', padx=(110, 0), pady=(0, 20))
 
@@ -1239,6 +1260,11 @@ class ModernApp(ctk.CTk):
     def _on_conc_change(self, val):
         self._dlmgr.max_concurrent = int(val)
 
+    def _on_lang_change(self, val):
+        new_lang = 'zh' if val == '繁體中文' else 'en'
+        if new_lang != get_lang():
+            messagebox.showinfo('Language Settings', T('language_desc'))
+
     def _pick_dest(self):
         d = filedialog.askdirectory()
         if d:
@@ -1298,12 +1324,13 @@ class ModernApp(ctk.CTk):
 
             # Create or update each row
             for item in items:
-                if item.url in self._dl_rows:
-                    self._update_dl_row(self._dl_rows[item.url], item)
-                else:
-                    self._dl_rows[item.url] = self._build_dl_row(item)
+                with item._lock:
+                    if item.url in self._dl_rows:
+                        self._update_dl_row(self._dl_rows[item.url], item)
+                    else:
+                        self._dl_rows[item.url] = self._build_dl_row(item)
 
-        # Update status bar
+        # Update status bar only if needed
         a = self._dlmgr.active_count
         p = self._dlmgr.pending_count
         parts = []
@@ -1314,7 +1341,9 @@ class ModernApp(ctk.CTk):
         done = sum(1 for i in items if i.state == '已下載')
         if done:
             parts.append(f'已完成 {done}')
-        self._status_lbl.configure(text='  |  '.join(parts) if parts else '就緒')
+        status_text = '  |  '.join(parts) if parts else '就緒'
+        if self._status_lbl.cget('text') != status_text:
+            self._status_lbl.configure(text=status_text)
 
         self.after(1000, self._refresh_downloads)
 

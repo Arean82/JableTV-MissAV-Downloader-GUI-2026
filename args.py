@@ -14,6 +14,8 @@ def get_parser():
                         help="Jable TV URL to download")
     parser.add_argument("--nogui", type=bool, default=False,
                         help="True for disable gui mode")
+    parser.add_argument("--lang", type=str, default="zh",
+                        help="Language code (zh, en)")
 
     return parser
 

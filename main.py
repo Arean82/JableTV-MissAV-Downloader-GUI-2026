@@ -45,9 +45,9 @@ if __name__ == "__main__":
     if args.nogui:
         M3U8Sites.consoles_main(url_arg, save_folder)
     elif _USE_MODERN:
-        _gui_main(url_arg, save_folder)
+        _gui_main(url_arg, save_folder, lang=args.lang)
     else:
         from gui import gui_main
-        gui_main(url_arg, save_folder)
+        gui_main(url_arg, save_folder, lang=args.lang)
 
     sys.exit(0)
