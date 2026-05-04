@@ -1,0 +1,8 @@
+{
+    "save_path": "download",
+    "max_concurrent": 3,
+    "speed_limit": 0,
+    "language": "en",
+    "theme": "light",
+    "resolution": "highest"
+}

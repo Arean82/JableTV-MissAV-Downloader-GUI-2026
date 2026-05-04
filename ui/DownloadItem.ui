@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DownloadItem</class>
+ <widget class="QWidget" name="DownloadItem">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>80</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>80</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>80</height>
+   </size>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+    QWidget#DownloadItem { background-color: #13132c; border: 1px solid #242444; border-radius: 6px; }
+    QLabel#nameLabel { color: #eaeaf4; font-weight: bold; }
+    QLabel#statusLabel { color: #9494b4; font-size: 10px; }
+    QProgressBar { background-color: #1a1a38; border: none; border-radius: 4px; height: 6px; text-align: center; color: transparent; }
+    QProgressBar::chunk { background-color: #e94560; border-radius: 4px; }
+    QPushButton#cancelBtn { background-color: transparent; border: 1px solid #343460; border-radius: 4px; color: #f87171; padding: 4px; }
+    QPushButton#cancelBtn:hover { background-color: #2a1a1c; border-color: #f87171; }
+   </string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>15</number>
+   </property>
+   <item>
+    <layout class="QVBoxLayout" name="infoLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="nameLabel">
+       <property name="text">
+        <string>Video Title Placeholder</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="progressBar">
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="statusRow">
+       <item>
+        <widget class="QLabel" name="statusLabel">
+         <property name="text">
+          <string>Waiting...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="speedLabel">
+         <property name="text">
+          <string>0 KB/s</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #585878; font-family: 'Consolas';</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="cancelBtn">
+     <property name="minimumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>✕</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

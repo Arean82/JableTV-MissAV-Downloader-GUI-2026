@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DownloadPanel</class>
+ <widget class="QWidget" name="DownloadPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+    QWidget { background-color: #0b0b19; color: #eaeaf4; font-family: 'Segoe UI'; }
+    QFrame#inputFrame { background-color: #13132c; border-radius: 10px; border: 1px solid #242444; }
+    QLineEdit { background-color: #181836; border: 1px solid #242444; border-radius: 4px; padding: 8px; color: #eaeaf4; }
+    QPushButton#downloadBtn { background-color: #e94560; border: none; border-radius: 4px; padding: 10px 20px; color: #ffffff; font-weight: bold; }
+    QPushButton#downloadBtn:hover { background-color: #ff5a75; }
+    QPushButton#downloadAllBtn, QPushButton#cancelAllBtn, QPushButton#clearListBtn, QPushButton#openFolderBtn { background-color: #1a1a38; border: 1px solid #242444; border-radius: 4px; padding: 6px 12px; color: #eaeaf4; }
+    QPushButton#downloadAllBtn:hover, QPushButton#cancelAllBtn:hover, QPushButton#clearListBtn:hover, QPushButton#openFolderBtn:hover { border-color: #e94560; }
+   </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>20</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="inputFrame">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="urlLayout">
+        <item>
+         <widget class="QLabel" name="urlLabel">
+          <property name="text">
+           <string>Video URL</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="urlEdit">
+          <property name="placeholderText">
+           <string>Paste URL here...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="downloadBtn">
+          <property name="text">
+           <string>Download</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+       <item>
+        <layout class="QHBoxLayout" name="actionLayout">
+         <item>
+          <widget class="QPushButton" name="downloadAllBtn">
+           <property name="text">
+            <string>Download All</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cancelAllBtn">
+           <property name="text">
+            <string>Cancel All</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clearListBtn">
+           <property name="text">
+            <string>Clear List</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="openFolderBtn">
+           <property name="text">
+            <string>Open Folder</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <layout class="QVBoxLayout" name="listLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
