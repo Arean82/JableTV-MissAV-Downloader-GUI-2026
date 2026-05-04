@@ -44,11 +44,6 @@
        <string>Download</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tabSettings">
-      <attribute name="title">
-       <string>Settings</string>
-      </attribute>
-     </widget>
     </widget>
    </item>
   </layout>

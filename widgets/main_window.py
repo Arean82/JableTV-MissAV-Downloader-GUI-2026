@@ -35,15 +35,9 @@ class MainWindow(QMainWindow):
         ui_file.close()
         
         # Add sub-panels
-        from widgets.settings_panel import SettingsPanel
-        self.settings_panel = SettingsPanel(self.ui.tabSettings)
-        from PySide6.QtWidgets import QVBoxLayout, QStatusBar
-        settings_layout = QVBoxLayout(self.ui.tabSettings)
-        settings_layout.setContentsMargins(0,0,0,0)
-        settings_layout.addWidget(self.settings_panel)
-        
         from widgets.download_panel import DownloadPanel
         self.download_panel = DownloadPanel(self.ui.tabDownload)
+        from PySide6.QtWidgets import QVBoxLayout, QStatusBar
         download_layout = QVBoxLayout(self.ui.tabDownload)
         download_layout.setContentsMargins(0,0,0,0)
         download_layout.addWidget(self.download_panel)
@@ -75,7 +69,6 @@ class MainWindow(QMainWindow):
         
         # Signals
         self.ui.tabWidget.currentChanged.connect(self._on_tab_changed)
-        self.settings_panel.languageChanged.connect(self.retranslate_ui)
         self.download_panel.downloadRequested.connect(self._on_download_requested)
         self.browse_panel.downloadRequested.connect(self._on_multi_download_requested)
         
@@ -106,6 +99,10 @@ class MainWindow(QMainWindow):
         
         # View Menu
         self.menuView = self.menubar.addMenu("View")
+        self.actionSettings = QAction("Settings", self)
+        self.actionSettings.triggered.connect(self._show_settings)
+        self.menuView.addAction(self.actionSettings)
+        
         self.actionToggleTheme = QAction("Toggle Dark/Light Mode", self)
         self.actionToggleTheme.triggered.connect(self.toggle_theme)
         self.menuView.addAction(self.actionToggleTheme)
@@ -124,31 +121,31 @@ class MainWindow(QMainWindow):
         # Apply theme to the container widget that holds all tabs
         # This restores the "Browser" background while sparing the QMainWindow shell
         self.ui.tabWidget.setStyleSheet(qss)
-        self.ui.headerFrame.setStyleSheet(qss)
         
         self.statusbar.showMessage(f"Theme switched to {'Dark' if self._is_dark else 'Light'}", 2000)
+
+    def _show_settings(self):
+        from widgets.settings_dialog import SettingsDialog
+        dialog = SettingsDialog(self)
+        dialog.settings_panel.languageChanged.connect(self.retranslate_ui)
+        dialog.exec()
 
     def retranslate_ui(self):
         """Update all text from locales.py"""
         self.ui.tabWidget.setTabText(0, T('tab_browse'))
         self.ui.tabWidget.setTabText(1, T('tab_download'))
-        self.ui.tabWidget.setTabText(2, T('tab_settings'))
         
         # Menus
         self.menuFile.setTitle(T('menu_file'))
         self.actionExit.setText(T('menu_exit'))
         self.menuView.setTitle(T('menu_view'))
+        self.actionSettings.setText(T('tab_settings'))
         self.actionToggleTheme.setText(T('menu_toggle_theme'))
         self.menuHelp.setTitle(T('menu_help'))
         self.actionAbout.setText(T('menu_about'))
         
-        self.settings_panel.retranslate_ui()
         self.download_panel.retranslate_ui()
         self.browse_panel.retranslate_ui()
-        
-        # Update labels (using setHtml to preserve span colors in brandLabel)
-        self.ui.brandLabel.setText(f"{T('app_brand_1')} <span style='color:#e94560;'>{T('app_brand_2')}</span>")
-        self.ui.versionLabel.setText(f"{T('version_label')} | {T('by_author')}")
         
         self.statusbar.showMessage(T('st_idle'))
 
