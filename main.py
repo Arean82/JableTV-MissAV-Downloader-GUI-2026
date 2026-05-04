@@ -14,6 +14,7 @@ except Exception:
     except Exception:
         pass
 
+import M3U8Sites
 from args import *
 
 # Use modern CustomTkinter GUI by default; fall back to basic tkinter if unavailable

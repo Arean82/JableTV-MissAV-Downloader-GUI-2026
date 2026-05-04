@@ -14,6 +14,7 @@ except Exception:
     except Exception:
         pass
 
+import M3U8Sites
 from args import *
 from gui_modern import gui_modern_main
 
